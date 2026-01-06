@@ -1,0 +1,25 @@
+public class Item {
+    public int itemId;
+    public String description;
+    public double price;
+    public int quantity;
+    public String creationDate;
+
+    public Item(int itemId, String description,double price,int quantity,String creationDate)
+    {
+        this.itemId=itemId;
+        this.description=description;
+        this.price=price;
+        this.quantity=quantity;
+        this.creationDate=creationDate;
+    }
+    public String toFileString()
+    {
+        return itemId+";"+description+";"+price+";"+quantity+";"+creationDate+";";
+    }
+    public static Item fromFileString(String line)
+    {
+        String[] parts=line.split(";");
+        return new Item(Integer.parseInt(parts[0]),parts[1],Double.parseDouble(parts[2]),Integer.parseInt(parts[3]),parts[4]);
+    }
+}

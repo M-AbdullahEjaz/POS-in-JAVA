@@ -1,0 +1,163 @@
+import java.util.*;
+
+public class Main {
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\nMain Menu");
+            System.out.println("1- Manage Items");
+            System.out.println("2- Manage Customers");
+            System.out.println("3- Exit");
+            System.out.print("Choose an option: ");
+            String choice = sc.nextLine();
+
+            switch (choice) {
+                case "1": manageItems(); break;
+                case "2": manageCustomers(); break;
+                case "3": System.out.println("Exiting..."); return;
+                default: System.out.println("Invalid option!");
+            }
+        }
+    }
+
+    static void manageItems() {
+        while (true) {
+            System.out.println("\nItems Menu");
+            System.out.println("1- Add new Item");
+            System.out.println("2- Find Items");
+            System.out.println("3- Remove Item");
+            System.out.println("4- Back");
+            System.out.print("Choose: ");
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1": addItem(); break;
+                case "2": findItem(); break;
+                case "3": removeItem(); break;
+                case "4": return;
+                default: System.out.println("Invalid!");
+            }
+        }
+    }
+
+    static void addItem() {
+        List<String> items = FileManager.readFile("items.txt");
+        int id = utils.generateId(items);
+        System.out.print("Description: ");
+        String desc = sc.nextLine();
+        System.out.print("Price: ");
+        double price = Double.parseDouble(sc.nextLine());
+        System.out.print("Quantity: ");
+        int qty = Integer.parseInt(sc.nextLine());
+        String date = utils.getCurrentDate();
+        Item newItem = new Item(id, desc, price, qty, date);
+        FileManager.appendToFile("items.txt", newItem.toFileString());
+        System.out.println("Item saved.");
+    }
+
+    static void findItem() {
+        System.out.print("Enter description to search: ");
+        String search = sc.nextLine().toLowerCase();
+        List<String> items = FileManager.readFile("items.txt");
+        boolean found = false;
+        for (String line : items) {
+            if (line.toLowerCase().contains(search)) {
+                Item item = Item.fromFileString(line);
+                System.out.println("ID: " + item.itemId + ", Desc: " + item.description + ", Price: " + item.price + ", Qty: " + item.quantity);
+                found = true;
+            }
+        }
+        if (!found) System.out.println("Item not found.");
+    }
+
+    static void removeItem() {
+        System.out.print("Enter Item ID to remove: ");
+        int id = Integer.parseInt(sc.nextLine());
+        List<String> items = FileManager.readFile("items.txt");
+        boolean removed = false;
+        List<String> updated = new ArrayList<>();
+        for (String line : items) {
+            Item item = Item.fromFileString(line);
+            if (item.itemId != id) {
+                updated.add(line);
+            } else {
+                removed = true;
+            }
+        }
+        if (removed) {
+            FileManager.overwriteFile("items.txt", updated);
+            System.out.println("Item removed.");
+        } else {
+            System.out.println("Item ID not found.");
+        }
+    }
+
+    static void manageCustomers() {
+        while (true) {
+            System.out.println("\nCustomers Menu");
+            System.out.println("1- Add new Customer");
+            System.out.println("2- Find Customer");
+            System.out.println("3- Remove Customer");
+            System.out.println("4- Back");
+            System.out.print("Choose: ");
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1": addCustomer(); break;
+                case "2": findCustomer(); break;
+                case "3": removeCustomer(); break;
+                case "4": return;
+                default: System.out.println("Invalid!");
+            }
+        }
+    }
+
+    static void addCustomer() {
+        List<String> customers = FileManager.readFile("customers.txt");
+        int id = utils.generateId(customers);
+        System.out.print("Name: "); String name = sc.nextLine();
+        System.out.print("Address: "); String address = sc.nextLine();
+        System.out.print("Phone: "); String phone = sc.nextLine();
+        System.out.print("Email: "); String email = sc.nextLine();
+        System.out.print("Sales Limit: "); double limit = Double.parseDouble(sc.nextLine());
+        customer c = new customer(id, name, address, phone, email, 0.0, limit);
+        FileManager.appendToFile("customers.txt", c.toFileString());
+        System.out.println("Customer saved.");
+    }
+
+    static void findCustomer() {
+        System.out.print("Enter name or email to search: ");
+        String search = sc.nextLine().toLowerCase();
+        List<String> customers = FileManager.readFile("customers.txt");
+        boolean found = false;
+        for (String line : customers) {
+            if (line.toLowerCase().contains(search)) {
+                customer c = customer.fromFileString(line);
+                System.out.println("ID: " + c.customerId + ", Name: " + c.name + ", Email: " + c.email + ", Balance: " + c.amountPayable);
+                found = true;
+            }
+        }
+        if (!found) System.out.println("Customer not found.");
+    }
+
+    static void removeCustomer() {
+        System.out.print("Enter Customer ID to remove: ");
+        int id = Integer.parseInt(sc.nextLine());
+        List<String> customers = FileManager.readFile("customers.txt");
+        boolean removed = false;
+        List<String> updated = new ArrayList<>();
+        for (String line : customers) {
+            customer c = customer.fromFileString(line);
+            if (c.customerId != id) {
+                updated.add(line);
+            } else {
+                removed = true;
+            }
+        }
+        if (removed) {
+            FileManager.overwriteFile("customers.txt", updated);
+            System.out.println("Customer removed.");
+        } else {
+            System.out.println("Customer ID not found.");
+        }
+    }
+}
